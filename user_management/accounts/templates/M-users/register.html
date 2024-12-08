@@ -1,0 +1,220 @@
+{% extends 'base-auth.html' %}
+{% load static %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h3 class="text-center mb-0">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Create Your Account
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post" id="registration-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Profile Picture -->
+                    <div class="mb-3">
+                        {{ form.profile_picture.label_tag }}
+                        {{ form.profile_picture }}
+                        {% if form.profile_picture.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.profile_picture.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <!-- First Name -->
+                        <div class="col-md-6 mb-3">
+                            {{ form.first_name.label_tag }}
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.first_name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="col-md-6 mb-3">
+                            {{ form.last_name.label_tag }}
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.last_name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.email.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="mb-3">
+                        {{ form.phone_number.label_tag }}
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.phone_number.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Country -->
+                    <div class="mb-3">
+                        {{ form.country.label_tag }}
+                        {{ form.country }}
+                        {% if form.country.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.country.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Role -->
+                    <div class="mb-3">
+                        {{ form.role.label_tag }}
+                        {{ form.role }}
+                        {% if form.role.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.role.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.password.label_tag }}
+                            <div class="input-group">
+                                {{ form.password }}
+                                <button class="btn btn-outline-secondary toggle-password" type="button">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small class="form-text text-muted">
+                                {{ form.password.help_text }}
+                            </small>
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.password.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div id="password-strength" class="mt-2"></div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="col-md-6 mb-3">
+                            {{ form.confirm_password.label_tag }}
+                            <div class="input-group">
+                                {{ form.confirm_password }}
+                                <button class="btn btn-outline-secondary toggle-password" type="button">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small class="form-text text-muted">
+                                {{ form.confirm_password.help_text }}
+                            </small>
+                            {% if form.confirm_password.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.confirm_password.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                   
+                   {% if user.is_admin %}
+                          <!-- Active and Staff Fields -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                {{ form.is_active }}
+                                {{ form.is_active.label_tag }}
+                                <small class="form-text text-muted">
+                                    {{ form.is_active.help_text }}
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                {{ form.is_staff }}
+                                {{ form.is_staff.label_tag }}
+                                <small class="form-text text-muted">
+                                    {{ form.is_staff.help_text }}
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                {{ form.is_admin }}
+                                {{ form.is_admin.label_tag }}
+                                <small class="form-text text-muted">
+                                    {{ form.is_staff.help_text }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                   {% endif %}
+                    
+
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="terms" required>
+                        <label class="form-check-label" for="terms">
+                            I agree to the Terms of Service
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Register
+                    </button>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                Already have an account?
+                <a href="{% url 'login' %}" class="text-primary">Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

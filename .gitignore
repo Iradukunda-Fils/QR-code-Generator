@@ -1,0 +1,5 @@
+# Environment variables
+user_management/.env
+
+#env ignore
+/env
