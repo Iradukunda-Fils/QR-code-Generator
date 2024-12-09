@@ -1,0 +1,81 @@
+/* Dark mode and light mode variables */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --background-light: #f8f9fa;
+    --background-dark: #121212;
+    --text-color-light: #212529;
+    --text-color-dark: #f8f9fa;
+}
+
+[data-bs-theme="dark"] {
+    background-color: var(--background-dark);
+    color: var(--text-color-dark);
+}
+
+[data-bs-theme="light"] {
+    background-color: var(--background-light);
+    color: var(--text-color-light);
+}
+
+/* Form styling */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+/* Password strength indicator */
+#password-strength {
+    font-size: 0.85rem;
+    transition: color 0.3s ease;
+}
+
+#password-strength.weak {
+    color: #dc3545;
+}
+
+#password-strength.medium {
+    color: #ffc107;
+}
+
+#password-strength.strong {
+    color: #28a745;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .card {
+        border: none;
+        box-shadow: none;
+    }
+}
+
+/* Accessibility enhancements */
+.btn:focus,
+.form-control:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Dark mode toggle */
+#theme-toggle {
+    transition: transform 0.3s ease;
+}
+
+#theme-toggle:hover {
+    transform: rotate(180deg);
+}
+
+/* Example CSS for the download button */
+.btn-download {
+    transition: background-color 0.3s;
+}
+
+.btn-download:hover {
+    background-color: #28a745;
+    color: white;
+}
