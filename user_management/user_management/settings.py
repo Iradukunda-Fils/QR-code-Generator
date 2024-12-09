@@ -67,7 +67,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #static middleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 AUTH_USER_MODEL = 'authentication.User'
 LOGIN_URL = 'login'
@@ -173,3 +177,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_HOST_PASSWORD = 'your_email_password'  # Your email password
 # DEFAULT_FROM_EMAIL = 'your_email@example.com'  # Default "From" address
 
+
+
+
+#NGINIX CONFIGURATIONS
+
+# server {
+    #     listen 80;
+    #     server_name example.com www.example.com;
+    #     
