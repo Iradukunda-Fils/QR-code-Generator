@@ -26,7 +26,7 @@
                 <td>
                     {% if user.profile_picture %}
                     <a href="{{ user.profile_picture.url }}">
-                        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                        <img src="{{ user.profile_picture.url }}" alt="{% static 'img/logo.png' %}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
                     </a>
                     {% else %}
                     <img src="{% static 'img/logo.png' %}" alt="Default Profile" class="img-thumbnail" style="width: 100px; height: 100px;">
