@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -32,6 +33,7 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
+
 # Allowed Hosts
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host]
@@ -44,7 +46,7 @@ ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host]
 
 INSTALLED_APPS = [
     #Users Apps
-    'accounts.apps.AccountsConfig',
+    'authentication.apps.AuthConfig',
     "phonenumber_field",
     'django_countries',
     
@@ -67,7 +69,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'authentication.User'
 LOGIN_URL = 'login'
 
 
@@ -77,7 +79,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'accounts/templates'),
+            os.path.join(BASE_DIR, 'authentication/templates'),
             ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -108,6 +110,8 @@ DATABASES = {
     }
 }
 
+database_url = os.getenv('DB_URL')
+DATABASES['default'] = dj_database_url.parse(database_url)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -151,6 +155,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'user_management/static'),
     ]
 MEDIA_ROOT = os.path.join(BASE_DIR, "Media_users")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -159,12 +164,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email Configuration
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'smtp.example.com'  # SMTP server address
-EMAIL_PORT = 587  # Port for SMTP (usually 587 for TLS or 465 for SSL)
-EMAIL_USE_TLS = True  # Use TLS for security (set to True or False based on your SMTP server)
-EMAIL_HOST_USER = 'your_email@example.com'  # Your email address for authentication
-EMAIL_HOST_PASSWORD = 'your_email_password'  # Your email password
-DEFAULT_FROM_EMAIL = 'your_email@example.com'  # Default "From" address
+# EMAIL_HOST = 'smtp.example.com'  # SMTP server address
+# EMAIL_PORT = 587  # Port for SMTP (usually 587 for TLS or 465 for SSL)
+# EMAIL_USE_TLS = True  # Use TLS for security (set to True or False based on your SMTP server)
+# EMAIL_HOST_USER = 'your_email@example.com'  # Your email address for authentication
+# EMAIL_HOST_PASSWORD = 'your_email_password'  # Your email password
+# DEFAULT_FROM_EMAIL = 'your_email@example.com'  # Default "From" address
 
