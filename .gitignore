@@ -2,4 +2,4 @@
 user_management/.env
 
 # Virtual environment
-/env
+env/
