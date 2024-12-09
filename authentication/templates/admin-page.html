@@ -26,10 +26,10 @@
                 <td>
                     {% if user.profile_picture %}
                     <a href="{{ user.profile_picture.url }}">
-                        <img src="{{ user.profile_picture.url }}" alt="{% static 'img/logo.png' %}" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                        <img src="{{ user.profile_picture.url }}" alt="Profile" class="img-thumbnail" style="width: 50%px; height: 50%; object-fit: cover; border: radious 50%;">
                     </a>
                     {% else %}
-                    <img src="{% static 'img/logo.png' %}" alt="Default Profile" class="img-thumbnail" style="width: 100px; height: 100px;">
+                    <img src="{% static 'img/logo.png' %}" alt="Default Profile" class="img-thumbnail" tyle="width: 50%px; height: 50%; object-fit: cover; border: radious 50%;">
                     {% endif %}
                 </td>
                 <td>{{ user.first_name }} {{ user.last_name }}</td>
