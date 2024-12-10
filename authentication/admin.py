@@ -9,7 +9,7 @@ from .models import User
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     model = User
-    list_display = ('email', 'first_name', 'last_name', 'phone_number', 'country', 'role', 'is_active', 'is_staff', 'created_at', 'updated_at')
+    list_display = ('email', 'first_name', 'last_name', 'phone_number', 'country', 'role', 'is_active', 'is_admin', 'is_superuser', 'created_at', 'updated_at')
     list_filter = ('is_active', 'is_admin', 'is_staff', 'role', 'country')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)

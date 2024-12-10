@@ -6,13 +6,46 @@
 <div class="container-fluid px-4">
     <div class="row">
         <div class="col-12">
+            <style>
+                .breadcrumb-item span {
+                    font-size: larger;
+                }
+                .breadcrumb-item i {
+                    color: #6c757d; /* Gray color for icons */
+                }
+            </style>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">{{ userd.first_name }} {{ userd.last_name }}</li>
+                    {% if userd.is_superuser %}
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <i class="bi bi-person-star me-2"></i>
+                            <span style="font-size: larger;">{{ userd.first_name }} {{ userd.last_name }}</span>
+                            <span class="badge bg-warning text-dark ms-2">Super User</span>
+                        </li>
+                    {% elif userd.is_admin %}
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <i class="bi bi-person-badge me-2"></i>
+                            <span style="font-size: x-large;">{{ userd.first_name }} {{ userd.last_name }}</span>
+                            <span class="badge bg-primary ms-2">Admin</span>
+                        </li>
+                    {% elif userd.is_staff %}
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <i class="bi bi-person-check me-2"></i>
+                            <span style="font-size: larger;">{{ userd.first_name }} {{ userd.last_name }}</span>
+                            <span class="badge bg-info ms-2">Staff</span>
+                        </li>
+                    {% else %}
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <i class="bi bi-person-circle me-2"></i>
+                            <span style="font-size: larger;">{{ userd.first_name }} {{ userd.last_name }}</span>
+                            <span class="badge bg-secondary ms-2">{{ userd.role }}</span>
+                        </li>
+                    {% endif %}
                 </ol>
             </nav>
         </div>
     </div>
+    
 
     <div class="row">
         <div class="col-md-4">
@@ -36,7 +69,7 @@
                             </li>
                             <li>
                                 <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
-                                    <i class="bi bi-trash me-2"></i>Delete Account
+                                    <i class="bi bi-trash me-2"></i>Remove Account
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
@@ -72,17 +105,6 @@
                         </div>
                     </div>
                     <h4 class="mb-1">{{ userd.first_name }}</h4>
-                    <p class="text-muted mb-2">
-                        {% if userd.is_admin %}
-                            <span class="badge bg-primary">Admin</span>
-                        {% elif userd.is_staff %}
-                            <span class="badge bg-info">Staff</span>
-                        {% elif userd.is_superuser %}
-                            <span class="badge bg-warning text-dark">Super User</span>
-                        {% else %}
-                            <span class="badge bg-secondary">{{ userd.role }}</span>
-                        {% endif %}
-                    </p>
                     <p class="text-muted">
                         {% if userd.is_active %}
                             <span class="badge bg-success">Active</span>
@@ -99,15 +121,15 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-envelope me-2"></i>Email</span>
+                        <span><i class="bi bi-envelope me-2"></i></span>
                         <strong>{{ userd.email }}</strong>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-telephone me-2"></i>Phone</span>
+                        <span><i class="bi bi-telephone me-2"></i></span>
                         <strong>{{ userd.phone_number }}</strong>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-geo-alt me-2"></i>Country</span>
+                        <span><i class="bi bi-geo-alt me-2"></i></span>
                         <strong>{{ userd.country.name }}</strong>
                     </li>
                 </ul>
@@ -174,12 +196,12 @@
                 </div>
             </div>
 
-            <!-- <div class="card mb-4">
+            <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">Recent Activity</h5>
                 </div>
                 <ul class="list-group list-group-flush">
-                    {% for activity in recent_activities %}
+                    {% for activity in userd.recent_activities %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
                             <strong>{{ activity.action }}</strong>
@@ -191,9 +213,9 @@
                     <li class="list-group-item text-center text-muted">
                         No recent activities
                     </li>
-                    {% endfor %}
+                    {% endfor %}    
                 </ul>
-            </div> -->
+            </div>
         </div>
     </div>
 </div>

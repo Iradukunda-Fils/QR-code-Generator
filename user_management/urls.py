@@ -20,7 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static  
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('',include('authentication.urls')),
 ]
 
@@ -28,3 +28,8 @@ urlpatterns = [
 if not settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
+    
+admin.site.site_title = "QR-Code | Fablab-Genetator"
+admin.site.site_header = "QR Code Generator"
+admin.site.index_title = "User Management"
