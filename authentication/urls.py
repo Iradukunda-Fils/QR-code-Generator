@@ -1,11 +1,10 @@
 from django.urls import path
 from .views import (CustomLoginView, UserRegistrationView, LogoutView,
-                   DownloadQRCodeView, AdminView, UsersView)
+                   DownloadQRCodeView, AdminView, UsersView, UserUpdateView)
 
 #PASSWORD RESET PROCESSIES
 from django.urls import path
-from .views import (
-    CustomPasswordResetView,
+from .views import ( DetailsView,
     CustomPasswordResetDoneView,
     CustomPasswordResetConfirmView,
     CustomPasswordResetCompleteView
@@ -22,9 +21,6 @@ urlpatterns = [
 #PASSWORD RESET PROCESSIES
 
 urlpatterns += [
-    path('password-reset/', 
-         CustomPasswordResetView.as_view(), 
-         name='password_reset'),
     path('password-reset/done/', 
          CustomPasswordResetDoneView.as_view(), 
          name='password_reset_done'),
@@ -37,7 +33,16 @@ urlpatterns += [
 ]
 
 
+#USER PROFILES
+urlpatterns +=[
+    path('user-details/<int:id>', DetailsView.as_view(), name='user-detail'),
+    path('user-details/update/<int:pk>', UserUpdateView.as_view(), name='user-update'),
+]
+
+
 #DOWNLOAD QR CODE
+
+
 
 urlpatterns += [
     path('download-qr/<int:user_id>/', DownloadQRCodeView.as_view(), name='download_qr_code'),

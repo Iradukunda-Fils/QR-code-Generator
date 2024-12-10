@@ -1,4 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
+import re
+from django.contrib.auth.forms import SetPasswordForm
 from django_countries.widgets import CountrySelectWidget
 from phonenumber_field.formfields import PhoneNumberField
 from django.contrib.auth import get_user_model
@@ -35,6 +38,14 @@ class UserRegistrationForm(forms.ModelForm):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("An account with this email already exists.")
         return email
+    
+    def clean_profile_picture(self):
+        picture = self.cleaned_data.get('profile_picture')
+        if picture:
+            # Optional: Add image validation
+            if picture.size > 5 * 1024 * 1024:  # 5MB limit
+                raise ValidationError("Image file too large. Max size is 5MB.")
+        return picture
 
     def clean_password(self):
         password = self.cleaned_data.get('password')
@@ -71,3 +82,93 @@ class LoginForm(forms.Form):
         widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class': 'form-control'}),
         label=''
     )
+    
+
+class CustomSetPasswordForm(SetPasswordForm):
+    # Custom widget classes for each field
+    new_password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',  # Add Bootstrap classes or custom classes
+            'placeholder': 'Enter new password',
+            'autocomplete': 'new-password',
+        }),
+        label='New Password',
+    )
+    new_password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirm new password',
+            'autocomplete': 'new-password',
+        }),
+        label='Confirm New Password',
+    )
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        if user is None:
+            raise ValueError("User must be provided")
+
+        # Pass the user argument to the parent class's __init__ method
+        super().__init__(user=user, *args, **kwargs)
+        print(f"user with user id {user.id}")
+        self.user = user
+        
+
+    def save(self, commit=True):
+        if not self.user:
+            raise ValueError("No user has been provided for password reset.")
+        
+        user = User.objects.get(id=self.user.id)
+        user.set_password(self.cleaned_data['new_password1'])
+        
+        if commit:
+            user.save()  # Save the user to the database
+            
+            # Print confirmation after successful save
+            print(f"The password for {user.first_name} has been saved successfully!")
+    
+        return user
+    
+    
+    
+class UserUpdateForm(forms.ModelForm):
+    phone_number = PhoneNumberField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control'
+        }),
+        required=False,
+        )
+
+    class Meta:
+        model = User
+        fields = [
+            'first_name', 
+            'last_name', 
+            'email', 
+            'phone_number', 
+            'country', 
+            'profile_picture',
+            'role'
+        ]
+        widgets = {
+            'country': CountrySelectWidget(attrs={'class': 'form-select'}),
+            'role': forms.Select(attrs={'class': 'form-select'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        # Ensure email is unique, excluding the current user
+        if User.objects.exclude(pk=self.instance.pk).filter(email=email).exists():
+            raise ValidationError("This email is already in use.")
+        return email
+
+    def clean_profile_picture(self):
+        picture = self.cleaned_data.get('profile_picture')
+        if picture:
+            # Optional: Add image validation
+            if picture.size > 5 * 1024 * 1024:  # 5MB limit
+                raise ValidationError("Image file too large. Max size is 5MB.")
+        return picture
+

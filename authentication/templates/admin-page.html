@@ -49,13 +49,14 @@
                         {% for user in users %}
                         <tr>
                             <td class="text-center">
-                                {% if user.profile_picture %}
+                                <img src="{% static 'img/logo.png' %}" alt="Default Profile" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                                <!-- {% if user.profile_picture %}
                                 <a href="{{ user.profile_picture.url }}" data-bs-toggle="modal" data-bs-target="#profileModal{{ user.id }}">
                                     <img src="{{ user.profile_picture.url }}" alt="Profile" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
                                 </a>
-                                {% else %}
-                                <img src="{% static 'img/logo.png' %}" alt="Default Profile" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-                                {% endif %}
+                                {% else %} -->
+                                
+                                <!-- {% endif %} -->
                             </td>
                             <td>{{ user.first_name }} {{ user.last_name }}</td>
                             <td>{{ user.email }}</td>
@@ -86,9 +87,12 @@
                                         <i class="bi bi-qr-code"></i>
                                     </a>
                                     {% endif %}
-                                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#userDetailsModal{{ user.id }}" title="View Details">
-                                        <i class="bi bi-eye">
-                                    </button>
+                                    <a class="btn btn-info" 
+                                       href="{% url 'user-detail' user.id %}" 
+                                       title="View Details">
+                                       <i class="bi bi-eye"></i>
+                                    </a>
+
                                 </div>
                             </td>
                         </tr>

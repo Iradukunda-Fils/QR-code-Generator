@@ -153,7 +153,7 @@ USE_TZ = True
 
 # Static and Media Configurations (Optional)
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+MEDIA_URL = '/Media/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'user_management/static'),

@@ -1,0 +1,504 @@
+{% extends "base-auth.html" %}
+{% load static %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<div class="container-fluid px-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">{{ userd.first_name }} {{ userd.last_name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Profile Overview</h5>
+                    <div class="dropdown">
+                        <button class="btn btn-light btn-sm dropdown-toggle" type="button" id="profileActions" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileActions">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'user-update' userd.id %}">
+                                    <i class="bi bi-pencil me-2"></i>Edit Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                                    <i class="bi bi-lock me-2"></i>Reset Password
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
+                                    <i class="bi bi-trash me-2"></i>Delete Account
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% if userd.is_active %}
+                            <li>
+                                <a class="dropdown-item text-warning" href="#" data-bs-toggle="modal" data-bs-target="#deactivateUserModal">
+                                    <i class="bi bi-slash-circle me-2"></i>Deactivate Account
+                                </a>
+                            </li>
+                            {% else %}
+                            <li>
+                                <a class="dropdown-item text-success" href="#" data-bs-toggle="modal" data-bs-target="#activateUserModal">
+                                    <i class="bi bi-check-circle me-2"></i>Activate Account
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body text-center">
+                    <div class="position-relative d-inline-block mb-3">
+                        {% if userd.profile_picture %}
+                        <img src="{% static 'img/logo.png' %}" alt="{{ userd.get_full_name }}" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                        <img src="{% static 'img/logo.png' %}" alt="Default Profile" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% endif %}
+                        <div class="position-absolute bottom-0 end-0">
+                            {% if userd.qr_code %}
+                            <a href="{% url 'download_qr_code' userd.id %}" class="btn btn-sm btn-primary rounded-circle" title="Download QR Code">
+                                <i class="bi bi-qr-code"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <h4 class="mb-1">{{ userd.first_name }}</h4>
+                    <p class="text-muted mb-2">
+                        {% if userd.is_admin %}
+                            <span class="badge bg-primary">Admin</span>
+                        {% elif userd.is_staff %}
+                            <span class="badge bg-info">Staff</span>
+                        {% elif userd.is_superuser %}
+                            <span class="badge bg-warning text-dark">Super User</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ userd.role }}</span>
+                        {% endif %}
+                    </p>
+                    <p class="text-muted">
+                        {% if userd.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-danger">Inactive</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Contact Information</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-envelope me-2"></i>Email</span>
+                        <strong>{{ userd.email }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-telephone me-2"></i>Phone</span>
+                        <strong>{{ userd.phone_number }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-geo-alt me-2"></i>Country</span>
+                        <strong>{{ userd.country.name }}</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Account Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Username</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            {{ userd.first_name }} {{ userd.last_name }}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Date Joined</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            {{ userd.created_at|date:"F d, Y" }}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Last Updated</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            {{ userd.updated_at|timesince  }} ago
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- <div class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Last Login</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            {{ user.last_login|default:"Never" }}
+                        </div>
+                    </div> -->
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h6 class="mb-0">Account Type</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                            {% if userd.is_superuser %}
+                                Super Administrator
+                            {% elif userd.is_admin %}
+                                Administrator
+                            {% elif userd.is_staff %}
+                                Staff Member
+                            {% else %}
+                                Regular User
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Activity</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for activity in recent_activities %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ activity.action }}</strong>
+                            <small class="text-muted d-block">{{ activity.timestamp|timesince }} ago</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">{{ activity.type }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-center text-muted">
+                        No recent activities
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reset Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to reset the password for <span style="color:brown">{{ userd.first_name }}</span>?</p>
+                <form id="resetPasswordForm" method="POST" action="">
+                    {% csrf_token %}
+                    
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.new_password1.id_for_label }}" class="form-label">New Password</label>
+                        {{ form.new_password1 }}
+                        <div id="password-strength" class="mt-2"></div>
+                        <div class="text-muted small mt-2">
+                            Password Requirements:
+                            <ul class="list-unstyled">
+                                <li id="length-check">• At least 8 characters long</li>
+                                <li id="uppercase-check">• Contains an uppercase letter</li>
+                                <li id="lowercase-check">• Contains a lowercase letter</li>
+                                <li id="number-check">• Contains a number</li>
+                                <li id="special-check">• Contains a special character</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.new_password2.id_for_label }}" class="form-label">Confirm New Password</label>
+                        {{ form.new_password2 }}
+                        <div id="password-match" class="mt-2"></div>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Reset Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteUserModalLabel">
+                    <i class="bi bi-trash me-2"></i>Permanently Delete Account
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Warning:</strong> This action cannot be undone.
+                </div>
+                <p>Are you absolutely sure you want to permanently delete the account for 
+                    <span class="fw-bold text-danger">{{ userd.first_name }} {{ userd.last_name }}</span>?
+                </p>
+                <form id="deleteUserForm" method="POST" action="">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="deleteConfirmation" class="form-label">
+                            Type <kbd>DELETE</kbd> to confirm
+                        </label>
+                        <input type="text" class="form-control" id="deleteConfirmation" 
+                               placeholder="Enter DELETE to proceed">
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="submit" name="delete" id="confirmDeleteBtn" class="btn btn-danger" disabled>
+                            Permanently Delete
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Deactivate User Modal -->
+<div class="modal fade" id="deactivateUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Deactivate User Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to deactivate the account for <span style="color:brown">{{ userd.first_name }}?</p>
+                <form id="deactivateUserForm" method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit" name="deactivate" class="btn btn-danger">Confirm Deactivation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Activate User Modal -->
+<div class="modal fade" id="activateUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Activate User Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to activate the account for <span style="color:brown">{{ userd.first_name }}?</p>
+                <form id="activateUserForm" method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit" name="activate" class="btn btn-success">Confirm Activation</button>
+                </form>
+            </div>
+        </div>
+</div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const newPasswordInput = document.getElementById('id_new_password1');
+        const confirmPasswordInput = document.getElementById('id_new_password2');
+        const passwordStrengthIndicator = document.getElementById('password-strength');
+        const passwordMatchIndicator = document.getElementById('password-match');
+    
+        function validatePassword() {
+            const password = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const strengthChecks = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+    
+            // Update password strength indicators
+            document.getElementById('length-check').classList.toggle('text-success', strengthChecks.length);
+            document.getElementById('uppercase-check').classList.toggle('text-success', strengthChecks.uppercase);
+            document.getElementById('lowercase-check').classList.toggle('text-success', strengthChecks.lowercase);
+            document.getElementById('number-check').classList.toggle('text-success', strengthChecks.number);
+            document.getElementById('special-check').classList.toggle('text-success', strengthChecks.specialChar);
+    
+            // Password match check
+            const passwordsMatch = password === confirmPassword && password.length > 0;
+            passwordMatchIndicator.innerHTML = passwordsMatch 
+                ? '<span class="text-success">✓ Passwords match</span>' 
+                : '<span class="text-danger">✗ Passwords do not match</span>';
+    
+            // Overall strength check
+            const overallStrength = Object.values(strengthChecks).filter(Boolean).length;
+            let strengthText = '';
+            switch (overallStrength) {
+                case 0: 
+                case 1: 
+                    strengthText = 'Weak';
+                    strengthColor = 'danger';
+                    break;
+                case 2: 
+                case 3: 
+                    strengthText = 'Moderate';
+                    strengthColor = 'warning';
+                    break;
+                case 4: 
+                case 5:
+                    strengthText = 'Strong';
+                    strengthColor = 'success';
+                    break;
+            }
+    
+            passwordStrengthIndicator.innerHTML = `
+                <span class="badge bg-${strengthColor}">Password Strength: ${strengthText}</span>
+            `;
+    
+            // Enable/disable submit button based on validation
+            const submitButton = document.querySelector('button[type="submit"]');
+            submitButton.disabled = !(passwordsMatch && overallStrength >= 4);
+        }
+    
+        // Real-time validation
+        newPasswordInput.addEventListener('input', validatePassword);
+        confirmPasswordInput.addEventListener('input', validatePassword);
+    
+        // Initial validation
+        validatePassword();
+    });
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Password Reset Validation
+    const passwordValidation = {
+        newPasswordInput: document.getElementById('id_new_password1'),
+        confirmPasswordInput: document.getElementById('id_new_password2'),
+        passwordStrengthIndicator: document.getElementById('password-strength'),
+        passwordMatchIndicator: document.getElementById('password-match'),
+        
+        validatePassword: function() {
+            const password = this.newPasswordInput.value;
+            const confirmPassword = this.confirmPasswordInput.value;
+            const strengthChecks = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+
+            // Update individual password requirement indicators
+            document.getElementById('length-check').classList.toggle('text-success', strengthChecks.length);
+            document.getElementById('uppercase-check').classList.toggle('text-success', strengthChecks.uppercase);
+            document.getElementById('lowercase-check').classList.toggle('text-success', strengthChecks.lowercase);
+            document.getElementById('number-check').classList.toggle('text-success', strengthChecks.number);
+            document.getElementById('special-check').classList.toggle('text-success', strengthChecks.specialChar);
+
+            // Password match check
+            const passwordsMatch = password === confirmPassword && password.length > 0;
+            this.passwordMatchIndicator.innerHTML = passwordsMatch 
+                ? '<span class="text-success">✓ Passwords match</span>' 
+                : '<span class="text-danger">✗ Passwords do not match</span>';
+
+            // Overall strength calculation
+            const overallStrength = Object.values(strengthChecks).filter(Boolean).length;
+            let strengthText = '', strengthColor = '';
+            switch (overallStrength) {
+                case 0: 
+                case 1: 
+                    strengthText = 'Weak';
+                    strengthColor = 'danger';
+                    break;
+                case 2: 
+                case 3: 
+                    strengthText = 'Moderate';
+                    strengthColor = 'warning';
+                    break;
+                case 4: 
+                case 5:
+                    strengthText = 'Strong';
+                    strengthColor = 'success';
+                    break;
+            }
+
+            this.passwordStrengthIndicator.innerHTML = `
+                <span class="badge bg-${strengthColor}">Password Strength: ${strengthText}</span>
+            `;
+
+            // Enable/disable submit button
+            const submitButton = document.querySelector('#resetPasswordForm button[type="submit"]');
+            submitButton.disabled = !(passwordsMatch && overallStrength >= 4);
+        },
+
+        init: function() {
+            this.newPasswordInput.addEventListener('input', () => this.validatePassword());
+            this.confirmPasswordInput.addEventListener('input', () => this.validatePassword());
+            this.validatePassword(); // Initial validation
+        }
+    };
+
+    // Delete User Modal Validation
+    const deleteValidation = {
+        deleteConfirmationInput: document.getElementById('deleteConfirmation'),
+        confirmDeleteBtn: document.getElementById('confirmDeleteBtn'),
+
+        init: function() {
+            this.deleteConfirmationInput.addEventListener('input', () => {
+                const confirmText = this.deleteConfirmationInput.value.trim().toUpperCase();
+                this.confirmDeleteBtn.disabled = confirmText !== 'DELETE';
+                
+                if (confirmText === 'DELETE') {
+                    this.deleteConfirmationInput.classList.remove('is-invalid');
+                    this.deleteConfirmationInput.classList.add('is-valid');
+                } else {
+                    this.deleteConfirmationInput.classList.remove('is-valid');
+                    this.deleteConfirmationInput.classList.add('is-invalid');
+                }
+            });
+        }
+    };
+
+    // Initialize validations
+    passwordValidation.init();
+    deleteValidation.init();
+
+    // Update dropdown menu to handle delete modal
+    const deleteLink = document.querySelector('a[data-bs-target="#deactivateUserModal"][data-bs-original-title="Delete"]');
+    if (deleteLink) {
+        deleteLink.setAttribute('data-bs-target', '#deleteUserModal');
+    }
+});
+</script>
+
+
+{% endblock %}
