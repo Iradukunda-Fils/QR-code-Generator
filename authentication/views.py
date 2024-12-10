@@ -24,9 +24,7 @@ from django.contrib.auth.views import (
     PasswordResetConfirmView,
     PasswordResetCompleteView
 )
-
-
-from django.shortcuts import redirect
+from .permission import Admin
 
 class CustomLoginView(View):
     template_name = 'M-users/login.html'
@@ -78,35 +76,32 @@ class CustomLoginView(View):
             return redirect('user-qr')
 
 
-class UserRegistrationView(LoginRequiredMixin, View):
+class UserRegistrationView(Admin, View):
+    login_url = 'login'
     template_name = 'M-users/register.html'
     form_class = UserRegistrationForm
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('home-admin')
         
     def get(self, request):
-        if self.request.user.is_admin:
-            form = self.form_class()    
-            return render(request, self.template_name, {'form': form})
-        else:
-            return redirect('user-qr')
+        form = self.form_class()    
+        return render(request, self.template_name, {'form': form})
     
     def post(self, request):
-        if self.request.user.is_admin:
-            form = self.form_class(request.POST, request.FILES)
-            if form.is_valid():
-                form.save()
-                # Optionally, you could add custom logic here, such as sending a confirmation email
-                return redirect(self.success_url)
-            return render(request, self.template_name, {'form': form})
-        else:
-            return redirect('user-qr')
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            # Optionally, you could add custom logic here, such as sending a confirmation email
+            return redirect(self.success_url)
+        return render(request, self.template_name, {'form': form})
+        
         
         
 
 from .forms import CustomSetPasswordForm
 
-class DetailsView(View):
+class DetailsView(Admin, View):
     template_name = 'M-users/details.html'
+    login_url = 'login'
 
     def get_user(self, id):
         """Helper method to fetch the user object."""
@@ -158,7 +153,8 @@ class DetailsView(View):
     
     
     
-class UserUpdateView(UpdateView):
+class UserUpdateView(Admin, UpdateView):
+    login_url = 'login'
     model = User
     form_class = UserUpdateForm
     template_name = 'M-users/update.html'
@@ -178,7 +174,8 @@ class UserUpdateView(UpdateView):
     
 
 
-class LogoutView(View):
+class LogoutView(LoginRequiredMixin, View):
+    login_url = 'login'
     def get(self, request):
         if request.user.is_authenticated:
             logout(request)  # Logs out the user
@@ -234,19 +231,20 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     
 #DOWNLOAD QR CODE
 
-class AdminView(LoginRequiredMixin,View):
+class AdminView(Admin, View):
     template_name  = 'admin-page.html'
+    login_url = 'login'
+    
     def get(self, request):
-        if self.request.user.is_admin:
-            context = {
-            'users': User.objects.all(),
-            }
-            return render(request, self.template_name,context)
-        else:
-            return redirect('user-qr')
+        context = {
+        'users': User.objects.all(),
+        }
+        return render(request, self.template_name,context)
     
 class UsersView(LoginRequiredMixin,View):
+    login_url = 'login'
     template_name  = 'user_qr.html'
+    
     def get(self, request):
         return render(request, self.template_name)
 
@@ -257,6 +255,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 class DownloadQRCodeView(LoginRequiredMixin, View):
+    login_url = 'login'
     def get(self, request, *args, **kwargs):
         # Get the user by their ID (or email, etc.)
         user = get_object_or_404(User, id=kwargs['user_id'])

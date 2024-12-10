@@ -3,6 +3,7 @@
 
 {% block content %}
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
 <div class="container-fluid px-4">
     <div class="row mb-3 align-items-center">
         <div class="col">
@@ -63,12 +64,13 @@
                             <td>{{ user.phone_number }}</td>
                             <td>{{ user.country.name }}</td>
                             <td>
-                                {% if user.is_admin %}
+                                {% if user.is_superuser %}
+                                    <span class="badge bg-warning text-dark">Super</span>
+                                {% elif user.is_admin %}
                                     <span class="badge bg-primary">Admin</span>
                                 {% elif user.is_staff %}
                                     <span class="badge bg-info">Staff</span>
-                                {% elif user.is_superuser %}
-                                    <span class="badge bg-warning text-dark">Super</span>
+                                
                                 {% else %}
                                     <span class="badge bg-secondary">{{ user.role }}</span>
                                 {% endif %}
@@ -164,7 +166,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Print table functionality
     printTableBtn.addEventListener('click', function() {
         window.print();
+
     });
 });
 </script>
+
+
 {% endblock %}
