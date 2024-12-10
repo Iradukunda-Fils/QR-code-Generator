@@ -26,7 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    phone_number = PhoneNumberField(region="RW")  # Default region set to Rwanda  # Custom field for Rwanda
+    phone_number = PhoneNumberField(region="RW", unique=True)  # Default region set to Rwanda  # Custom field for Rwanda
     country = CountryField(blank_label='(Select country)', default='RW')   # Default country
     qr_code = models.ImageField(upload_to='qr_codes/', null=True, blank=True)
     role = models.CharField(max_length=20, choices=[('admin', 'Admin'), ('user', 'User'), ('other','Other')],default='other')
