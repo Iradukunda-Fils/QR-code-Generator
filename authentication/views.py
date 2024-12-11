@@ -14,6 +14,7 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.views import PasswordResetView
+from django.contrib.admin.models import LogEntry
 
 User = get_user_model()
 
@@ -114,6 +115,7 @@ class DetailsView(Admin, View):
         context = {
             'userd': userd,
             'form': form,
+            'recent_activities': LogEntry.objects.all()
         }
         return render(request, self.template_name, context)
 
@@ -148,6 +150,7 @@ class DetailsView(Admin, View):
         context = {
             'userd': userd,
             'form': form,
+            'recent_activities': LogEntry.objects.all()
         }
         return render(request, self.template_name, context)
     

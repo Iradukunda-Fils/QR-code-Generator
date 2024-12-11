@@ -199,18 +199,21 @@
             </div>
 
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header" style="display: flex; flex-direction:row; gap:40%">
                     <h5 class="mb-0">Recent Activity</h5>
                 </div>
                 <ul class="list-group list-group-flush">
-                    {% for activity in userd.recent_activities %}
+                    {% for activity in recent_activities %}
+                    
+                    {% if activity.user == userd %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
-                            <strong>{{ activity.action }}</strong>
-                            <small class="text-muted d-block">{{ activity.timestamp|timesince }} ago</small>
+                            <strong>{{ activity.get_action_flag_display }}</strong>
+                            <small class="text-muted d-block">{{ activity.action_time|timesince }} ago</small>
                         </div>
-                        <span class="badge bg-primary rounded-pill">{{ activity.type }}</span>
-                    </li>
+                        <span class="badge bg-primary rounded-pill">{{ activity.object_repr }}</span>
+                    </li>   
+                    {% endif %}                     
                     {% empty %}
                     <li class="list-group-item text-center text-muted">
                         No recent activities
